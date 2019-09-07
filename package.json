@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "async": "^3.1.0",
+    "body-parser": "^1.19.0",
+    "event-stream": "^4.0.1",
+    "events": "^3.0.0",
+    "express": "^4.17.1",
+    "express-jwt": "^5.3.1",
+    "filesize": "^4.1.2",
+    "http": "0.0.0",
+    "ioredis": "^4.14.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.6.12",
+    "morgan": "^1.9.1",
+    "nodemon": "^1.19.2",
+    "tabson": "0.0.1"
+  }
+}
