@@ -160,6 +160,7 @@ EventEmitter.on('storeDataMongo', function (file_name) {
 	let outstream = new stream();
 	let rl = readline.createInterface(instream, outstream);
 	let title = {};
+	let segments = [];
 	let file = mongoose.model(file_name.replace(/\.[^/.]+$/, ""), FileSchema);
 	let bulk = file.collection.initializeOrderedBulkOp();
 	title = {
@@ -169,7 +170,8 @@ EventEmitter.on('storeDataMongo', function (file_name) {
 	};
   	rl.on('line', function(line) {
 		line = line.split("\t");
-		bulk.insert({ _id: new mongoose.Types.ObjectId(), [title.User_id]: line[0], [title.segments]: line[1], [title.country]: line[2]});
+		segments = line[1].split(",")
+		bulk.insert({ _id: new mongoose.Types.ObjectId(), [title.User_id]: line[0], [title.segments]: segments, [title.country]: line[2]});
 		//insertar cada 1000 regs
 		if (lineCount % 1000 == 0){
 			// mongobulk(bulk);
@@ -214,33 +216,28 @@ EventEmitter.on('updateFileStatus', function (file_name, status, started=null, f
 	});
 });
 
-
-//-------------funciones-------------
 function performAggregate(file_name, query_params, callback){
-	let project = { "$project" : { "segment" : { "$split": ["$segments", ","] }, "country":1, "User_id":1 } };
-	let unwind 	= { "$unwind": "$segment" };
+	let project = { "$project" : { "segments" : 1, "country":1} };
+	let unwind 	= { "$unwind": "$segments"};
 	let group 	= { "$group" : 
 			        { "_id": 
 			            {
-			                "segment": "$segment", 
+			                "segments": "$segments", 
 			                "country": "$country" 
 			            }, 
 			            "count":{"$sum":1}
 			        } 
 			    };
-	let sort =  {"$sort" : { "count" : 1 } }; //asc por defecto
 	let aggregate = [
 		project,
 		unwind,
 		group,
-		sort
 	];
-	if(typeof query_params.sort !== "undefined"){
-		if(query_params.sort.toUpperCase() == "DESC"){
+	let sort =  {"$sort" : { "count" : 1 } }; //asc por defecto
+	if(typeof query_params.sort !== "undefined" && query_params.sort.toUpperCase() == "DESC"){
 			sort =  {"$sort" : { "count" : -1 } };
-		}
-		aggregate.push(sort);
 	}
+	aggregate.push(sort);
 
 	if(typeof query_params.limit !== "undefined"){
 		if(parseInt(query_params.limit) !== "NaN"){
