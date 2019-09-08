@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const CONFIG = require('./config.json');
 
 const app = express();
-const segmentRoutes = require('./api/routes/segments');
 const filesRoutes = require('./api/routes/files');
+const userRoutes = require('./api/routes/user');
 
 //------dbs connections------
 mongoose.pluralize(null);
@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 	next();
 });*/
 
-app.use('/segments', segmentRoutes);
+app.use('/user', userRoutes);
 app.use('/files', filesRoutes);
 
 app.use((req, res, next) => {
