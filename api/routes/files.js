@@ -14,6 +14,7 @@ const FileList = require('../models/fileList');
 const moment = require('moment');
 var readline = require('readline');
 var stream 	 = require('stream');
+const auth = require('../middleware/auth');
 
 var workingPath = path.join(__dirname, '../../material/');
 
@@ -32,7 +33,7 @@ router.post('/', (req, res, next) => {
 		segment: segment
 	});
 });
-router.get('/list', (req, res, next) => {
+router.get('/list', auth, (req, res, next) => {
 	let response = [];
 	//ver si agregar la lista de archivos en mongo
     fs.readdir(workingPath, function (err, files) {
@@ -41,13 +42,12 @@ router.get('/list', (req, res, next) => {
 	        return res.status(500).json({
 				message: err.message
 			});
-	    }
-
-		async.eachSeries(files, 
+	    } else {
+	    	async.eachSeries(files, 
 			function iterator(file, next){
 				var stats = fs.statSync(workingPath + file);
 				var size = stats.size;
-				if(req.query.humanreadable.toLowerCase() === "true"){
+				if(typeof req.query.humanreadable !== "undefined" && req.query.humanreadable.toLowerCase() === "true"){
 		        	size = fileSize(size);
 
 				}
@@ -67,8 +67,7 @@ router.get('/list', (req, res, next) => {
 					response
 				});
 			});
-
-
+	    }
 	});
 });
 
