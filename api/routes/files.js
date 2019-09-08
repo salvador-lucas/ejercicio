@@ -13,24 +13,13 @@ const readline 	= require('readline');
 const stream 	= require('stream');
 const auth 		= require('../middleware/auth');
 const events	= require('events');
-var EventEmitter = new events();
 
+var EventEmitter = new events();
 var workingPath = path.join(__dirname, '../../material/');
 
-// router.post('/', (req, res, next) => {
-// 	var segment = {
-// 		name: req.body.name
-// 	};
-// 	res.status(200).json({
-// 		message: 'post method files',
-// 		segment: segment
-// 	});
-// });
 router.get('/list', auth, (req, res, next) => {
 	let response = [];
-	//ver si agregar la lista de archivos en mongo
     fs.readdir(workingPath, function (err, files) {
-	    //handling error
 	    if (err) {
 	        return res.status(500).json({
 				message: err.message
@@ -51,11 +40,6 @@ router.get('/list', auth, (req, res, next) => {
 				next();
 			}, 
 			function doneIterate(){
-				/*if(err){
-					return res.status(500).json({
-						message: err.message
-					});
-				}*/
 				res.status(200).json({
 					response
 				});
