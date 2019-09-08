@@ -350,7 +350,7 @@ function performDataQuery(file_name, query_params, callback){
 	if(typeof query_params.fields !== "undefined" && query_params.fields !== null){
 		try{
 			fields = JSON.parse(query_params.fields);
-		} catch{
+		} catch(error){
 			fields = query_params.fields.split(",");	
 		}
 		fields.push("-_id");

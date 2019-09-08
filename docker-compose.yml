@@ -1,0 +1,25 @@
+version: '3'
+services:
+  mongo:
+    image: "mongo:3.6.8-stretch"
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo:/data/db
+
+  ejercicio:
+    build: .
+    depends_on:
+      - mongo
+
+    ports:
+      - 3000:3000
+    # Enable nexts lines to use local source code inside
+    # docker instance and automatically restart PM2
+    # you must have npm packages installed
+    #
+    volumes:
+      - ./:/ejercicio
+
+volumes:
+  mongo:
