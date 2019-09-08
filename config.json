@@ -3,5 +3,6 @@
 		"host":"localhost",
 		"port":"27017",
 		"db":"test"
-	}
+	},
+	"jwt_secretKey": "secretKeyTest123"
 }

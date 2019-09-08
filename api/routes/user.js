@@ -5,6 +5,7 @@ const bcrypt 	= require('bcrypt');
 const jwt 		= require('jsonwebtoken');
 const router 	= express.Router();
 const User 		= require('../models/user');
+const config 	= require('../../config');
 
 
 router.post('/signup', (req, res, next) => {
@@ -77,7 +78,7 @@ router.post('/login', (req, res, next) => {
 				var token = jwt.sign({
 					email: user_result.email
 				}, 
-				"secret_key_pasar a config", //PASAr KEY A MONGO
+				config.jwt_secretKey,
 				{expiresIn: "1h"}
 				);
 				return res.status(200).json({
