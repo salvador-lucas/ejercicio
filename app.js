@@ -3,19 +3,18 @@ const express = require('express');
 // const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const CONFIG = require('./config.json');
-
+const config = require('./config.' + process.env.NODE_ENV+ '.json');
 const app = express();
 const filesRoutes = require('./api/routes/files');
 const userRoutes = require('./api/routes/user');
 
-//------dbs connections------
+//------db connection------
 mongoose.pluralize(null);
-mongoose.connect('mongodb://' + CONFIG.mongo.host + ':' + CONFIG.mongo.port + '/' + CONFIG.mongo.db, 
+mongoose.connect('mongodb://' + config.mongo.host + ':' + config.mongo.port + '/' + config.mongo.db, 
 	{useNewUrlParser: true});
+
 mongoose.connection.on('connected', function(){
 	console.log("mongodb successfully connected");
-	return;
 });
 mongoose.connection.on('error', function(){
 	console.log("mongodb connection error");

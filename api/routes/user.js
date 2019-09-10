@@ -1,11 +1,11 @@
 "use strict";
 const express 	= require('express');
 const mongoose 	= require('mongoose');
-const bcrypt 	= require('bcrypt');
+const bcrypt 	= require('bcrypt-nodejs');
 const jwt 		= require('jsonwebtoken');
 const router 	= express.Router();
 const User 		= require('../models/user');
-const config 	= require('../../config');
+const config 	= require('../../config.' + process.env.NODE_ENV+ '.json');
 
 
 router.post('/signup', (req, res, next) => {
@@ -22,7 +22,7 @@ router.post('/signup', (req, res, next) => {
 				message: "email already exists" 
 			});
 		} else {
-			bcrypt.hash(req.body.password, 10, function(err, hash){
+			bcrypt.hash(req.body.password, null, null, function(err, hash){
 				if(err){
 					return res.status(500).json({
 						status: "failed",

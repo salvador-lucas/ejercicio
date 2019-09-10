@@ -1,0 +1,12 @@
+{
+	"server":{
+		"url":"localhost",
+		"port":"3000"
+	},
+	"mongo":{
+		"host":"ejercicio_mongo_1",
+		"port":"27017",
+		"db":"ejercicio"
+	},
+	"jwt_secretKey": "secretKeyTest123"
+}

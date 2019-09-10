@@ -147,9 +147,17 @@ router.get('/data', auth, (req, res, next) =>{
 						message: err.errmsg
 					});
 				} else {
-					//traer la info
-					return res.status(200).json({
-						status: "todo ok"
+					performDataQuery(file_name, req.query, function(err, result){
+						if(err){
+							 return res.status(500).json({
+								status: "failed",
+								message: err
+							});
+						} else {
+							return res.status(200).json({
+								status: result
+							});
+						}
 					});
 				}
 			});
@@ -161,7 +169,6 @@ router.get('/data', auth, (req, res, next) =>{
 						message: err
 					});
 				} else {
-					//traer la info
 					return res.status(200).json({
 						status: result
 					});
@@ -219,7 +226,6 @@ EventEmitter.on('mongobulk', function (bulk, file_name) {
 });
 
 EventEmitter.on('updateFilestatus', function (file_name, status, started=null, finished=null){
-	console.log(status);
 	let update_params = { status: status };
 	if(started != null){
 		update_params.started = started;
@@ -363,7 +369,6 @@ function performDataQuery(file_name, query_params, callback){
 		}
 	}
 	//sortField
-	console.log(query_params.sortField);
 	if(typeof query_params.sortField !== "undefined" && query_params.sortField !== null){
 		query_sort = {
 			[query_params.sortField]: 1 //asc por defecto

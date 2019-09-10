@@ -1,6 +1,6 @@
 "use strict"; 
 const jwt = require('jsonwebtoken');
-const config = require('../../config');
+const config = require('../../config.' + process.env.NODE_ENV+ '.json');
 
 module.exports = (req, res, next) => {
 	let token = "";
