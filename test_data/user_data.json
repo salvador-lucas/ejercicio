@@ -1,0 +1,10 @@
+{
+	"wrong_user": {
+		"email": "wronguser@mail.com", 
+		"password": "passtest"
+	},
+	"new_user": {
+		"email": "newuser@mail.com", 
+		"password": "passtest"
+	}
+}

@@ -111,8 +111,8 @@ router.get('/metrics', auth, (req, res, next) => {
 					file_name: file_name,
 					status: result.status,
 					started: result.started,
-					Finished: result.finished,
-					Metrics: file_metrics
+					finished: result.finished,
+					metrics: file_metrics
 				});
 			});
 		}
@@ -172,9 +172,8 @@ router.get('/data', auth, (req, res, next) =>{
 });
 
 
-//-------------EVENTOS-------------
+//-------------EVENTS-------------
 EventEmitter.on('storeDataMongo', function (file_name) {
-	console.log("storedata");
 	let instream  = fs.createReadStream(workingPath + file_name);
 	let outstream = new stream();
 	let lineCount = 0;
@@ -193,7 +192,7 @@ EventEmitter.on('storeDataMongo', function (file_name) {
 		bulk.insert({ _id: new mongoose.Types.ObjectId(), [title.User_id]: line[0], [title.segments]: segments, [title.country]: line[2]});
 		//insertar cada 1000 regs
 		if (lineCount % 1000 == 0){
-			EventEmitter.emit('mongobulk', bulk);
+			EventEmitter.emit('mongobulk', bulk, file_name);
 			bulk = File.collection.initializeOrderedBulkOp();
 			lineCount = 0;
 	    }
@@ -203,17 +202,18 @@ EventEmitter.on('storeDataMongo', function (file_name) {
 	rl.on('close', function(err, res){
 		//insertar si quedo algun reg pendiente
 		if (lineCount > 0){
-			EventEmitter.emit('mongobulk', bulk);
+			EventEmitter.emit('mongobulk', bulk, file_name);
 			let finished = moment().format("YYYY-MM-DDTHH:mm:ss");
 			EventEmitter.emit('updateFilestatus', file_name, "ready", null, finished);
 		}
 	});
 });
 
-EventEmitter.on('mongobulk', function (bulk) {
+EventEmitter.on('mongobulk', function (bulk, file_name) {
 	bulk.execute(function(err) {
 		if(err){
 			console.log(err);
+			EventEmitter.emit('updateFilestatus', file_name, "failed. details: " + err);
 		}
     });
 });
@@ -235,7 +235,7 @@ EventEmitter.on('updateFilestatus', function (file_name, status, started=null, f
 });
 
 
-//-------------FUNCIONES-------------
+//-------------FUNCTIONS-------------
 function performAggregate(file_name, query_params, callback){
 	let project = { "$project" : { "segments" : 1, "country":1} };
 	let unwind 	= { "$unwind": "$segments"};
@@ -278,7 +278,7 @@ function performAggregate(file_name, query_params, callback){
 
 function fileSize(size) {
     var i = Math.floor(Math.log(size) / Math.log(1024));
-    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ''+['B', 'kB', 'MB', 'GB', 'TB'][i];
+    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ''+[' B', ' kB', ' MB', ' GB', ' TB'][i];
 }
 
 function storeCsvData(file_name, callback){

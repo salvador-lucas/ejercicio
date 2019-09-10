@@ -14,12 +14,9 @@ services:
 
     ports:
       - 3000:3000
-    # Enable nexts lines to use local source code inside
-    # docker instance and automatically restart PM2
-    # you must have npm packages installed
-    #
     volumes:
       - ./:/ejercicio
+      - /ejercicio/node_modules
 
 volumes:
   mongo:

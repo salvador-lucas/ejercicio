@@ -14,7 +14,7 @@ mongoose.pluralize(null);
 mongoose.connect('mongodb://' + CONFIG.mongo.host + ':' + CONFIG.mongo.port + '/' + CONFIG.mongo.db, 
 	{useNewUrlParser: true});
 mongoose.connection.on('connected', function(){
-	console.log("mongodb connected successful");
+	console.log("mongodb successfully connected");
 	return;
 });
 mongoose.connection.on('error', function(){
